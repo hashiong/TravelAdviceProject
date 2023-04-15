@@ -106,12 +106,10 @@ async function getTravelInfo(airport){
         continue;
       }
 
-      let temp = {"city": destinations_info[i].city, "country": destinations_info[i].country, "image_url": image_url, "clickoutUrl": destinations_info[i].url}
+      // let temp = {"city": destinations_info[i].city, "country": destinations_info[i].country, "image_url": image_url, "clickoutUrl": destinations_info[i].url}
+      let temp = {img: image_url, clickoutUrl: destinations_info[i].url, rows: 2, cols: 2}
       output.push(temp)
     }
-    
-
-    
     
     client.close();
     return output;
