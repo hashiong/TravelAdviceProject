@@ -2,7 +2,7 @@
 import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import photos from "./data.json"
+
 
 // Function to create an object with src and srcSet properties
 // based on the image, size, and number of rows and columns
@@ -19,6 +19,7 @@ function srcset(image, size, rows = 1, cols = 1) {
 export default function QuiltedImageList() {
 
   // State hooks to keep track of the width and height of the viewport
+  const [photos, setPhotos] = React.useState([]);
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setHeight] = React.useState(window.innerHeight);
 
@@ -65,14 +66,24 @@ export default function QuiltedImageList() {
     return [cols, rows];
   };
   
+  React.useEffect(() => {
+    // fetch data from API
+    fetch('http://localhost:3000/api/flightinfo')
+      .then(response => response.json())
+      .then(data => setPhotos(data))
+      .catch(error => console.error(error));
+  }, []); // only run once, on component mount
 
   return (
     // Render the ImageList component with the calculated width and height
+
     <ImageList
-      sx={{ width: width, height: height }}
+      sx={{ width: width - 10, height: height, margin: 1 }}
       variant="quilted"
       cols={4}
       rowHeight={250}
+      gap={10}
+      
     >
       {photos.map((item) => {
         // Create a new Image object to get the naturalWidth and naturalHeight
@@ -82,7 +93,7 @@ export default function QuiltedImageList() {
         return (
           // Render each image as an ImageListItem with the calculated number of columns and rows
           <ImageListItem key={item.img} cols={cols} rows={rows} >
-            <img
+            <img 
               {...srcset(item.img, 121, rows, cols)}
               alt=""
               loading="lazy"
@@ -92,5 +103,6 @@ export default function QuiltedImageList() {
         );
       })}
     </ImageList>
+
   );
 }

@@ -1,7 +1,21 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { MongoClient } = require('mongodb')
-const fs = require('fs');
+const cors = require('cors');
+
+const express = require("express");
+const app = express();
+app.use(cors());
+
+app.listen(3000, function() {
+  console.log('Server started on port 3000');
+});
+
+app.get('/api/flightinfo', async function(req, res) {
+  const output = await getTravelInfo("LAX")
+  console.log("Obtained flight data")
+  res.json(output);
+});
 
 async function establish_dbconnection(){
 
@@ -107,7 +121,7 @@ async function getTravelInfo(airport){
       }
 
       // let temp = {"city": destinations_info[i].city, "country": destinations_info[i].country, "image_url": image_url, "clickoutUrl": destinations_info[i].url}
-      let temp = {img: image_url, clickoutUrl: destinations_info[i].url, rows: 2, cols: 2}
+      let temp = {img: image_url, clickoutUrl: destinations_info[i].url}
       output.push(temp)
     }
     
@@ -237,16 +251,3 @@ async function getSearchResultImages(client, city, country) {
   }
 }
 
-async function run(){
-  let output = await getTravelInfo("LAX")
-  const jsonData = JSON.stringify(output);
-  fs.writeFile('data.json', jsonData, (err) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log('Data written to file');
-  });
-}
-
-run()
