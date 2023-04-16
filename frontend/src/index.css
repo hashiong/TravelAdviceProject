@@ -30,3 +30,53 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-text{
+  margin-top: -4%;
+  color: white;
+  text-align: center;
+  font-size: 110%;
+}
+
+.main-loading-text{
+  font-size: 170%;
+}
+
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}
+
+
+.main-loading-text span {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: ellipsis 1s infinite;
+}
+
+.spinner {
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #7986cb;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spinner 0.6s linear infinite;
+  margin-bottom: 5%;
+}

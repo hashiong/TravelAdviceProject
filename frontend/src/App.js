@@ -3,39 +3,24 @@ import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
-
 // Function to create an object with src and srcSet properties
 // based on the image, size, and number of rows and columns
 function srcset(image, size, rows = 1, cols = 1) {
   return {
     src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
-    srcSet: `${image}?w=${size * cols}&h=${
-      size * rows
-    }&fit=crop&auto=format&dpr=2 2x`,
+    srcSet: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format&dpr=2 2x`,
   };
 }
 
 // The component that renders the ImageList
 export default function QuiltedImageList() {
 
-  // State hooks to keep track of the width and height of the viewport
-  const [photos, setPhotos] = React.useState([]);
+  // State hooks to keep track of the width and height of the viewport, location, and photos
   const [width, setWidth] = React.useState(window.innerWidth);
   const [height, setHeight] = React.useState(window.innerHeight);
-
-  // Effect hook to add and remove event listener for window resize
-  React.useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-      setHeight(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const [location, setLocation] = React.useState({ city: "", state: "" });
+  const [photos, setPhotos] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   // Function to open a new tab with the provided URL
   const openInNewTab = (url) => {
@@ -65,44 +50,86 @@ export default function QuiltedImageList() {
     }
     return [cols, rows];
   };
-  
+
+  // Effect hook to add and remove event listener for window resize
   React.useEffect(() => {
-    // fetch data from API
-    fetch('http://localhost:3000/api/flightinfo')
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Effect hook to fetch location from API on component mount
+  React.useEffect(() => {
+    fetch('https://ipinfo.io/?token=4440474e851c76')
       .then(response => response.json())
-      .then(data => setPhotos(data))
+      .then(data => {
+        setLocation({ city: data.city, state: data.region });
+      })
       .catch(error => console.error(error));
-  }, []); // only run once, on component mount
+  }, []);
+
+  // Effect hook to fetch data from API using location on component mount and whenever the location changes
+  React.useEffect(() => {
+    if (location.city && location.state) {
+      setIsLoading(true); // Set the IsLoading state to true while fetching data
+      const url = `http://localhost:3001/api/flightinfo?city=${location.city}&state=${location.state}`;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          setPhotos(data);
+          setIsLoading(false); // Set the IsLoading state to false once data is fetched
+        })
+        .catch(error => console.error(error));
+    }
+  }, [location]);
 
   return (
-    // Render the ImageList component with the calculated width and height
+    <React.Fragment>
+      {/* Render a loading screen if data is being fetched */}
 
-    <ImageList
-      sx={{ width: width - 10, height: height, margin: 1 }}
-      variant="quilted"
-      cols={4}
-      rowHeight={250}
-      gap={10}
-      
-    >
-      {photos.map((item) => {
-        // Create a new Image object to get the naturalWidth and naturalHeight
-        const img = new Image();
-        img.src = item.img;
-        const [cols, rows] = calculateColsRows(img);
-        return (
-          // Render each image as an ImageListItem with the calculated number of columns and rows
-          <ImageListItem key={item.img} cols={cols} rows={rows} >
-            <img 
-              {...srcset(item.img, 121, rows, cols)}
-              alt=""
-              loading="lazy"
-              onClick={() => openInNewTab(item.clickoutUrl)}
-            />
-          </ImageListItem>
-        );
-      })}
-    </ImageList>
+      {isLoading && (
+        <div className="loading-screen">
+          <div className="spinner"></div>
+          <div className='loading-text'>
+          <p className='main-loading-text'>Loading<span>...</span></p>
+          <p>Please note that the initial load may take longer than subsequent loads.</p>
+          </div>
+        </div>
+      )}
 
+      {/* Render the ImageList component with the calculated width and height */}
+      {!isLoading && (
+        <ImageList
+          sx={{ width: width - 10, height: height, margin: 1 }}
+          variant="quilted"
+          cols={4}
+          rowHeight={250}
+          gap={10}
+        >
+          {photos.map((item) => {
+            // Create a new Image object to get the naturalWidth and naturalHeight
+            const img = new Image();
+            img.src = item.img;
+            const [cols, rows] = calculateColsRows(img);
+            return (
+              // Render each image as an ImageListItem with the calculated number of columns and rows
+              <ImageListItem key={item.img} cols={cols} rows={rows} >
+                <img 
+                  {...srcset(item.img, 121, rows, cols)}
+                  alt=""
+                  loading="lazy"
+                  onClick={() => openInNewTab(item.clickoutUrl)}
+                />
+              </ImageListItem>
+            );
+          })}
+        </ImageList>
+      )}
+    </React.Fragment>
   );
 }
