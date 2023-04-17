@@ -114,7 +114,7 @@ async function getTravelInfo(airport) {
       }
       locations.add(location);
 
-      let temp = { img: image_url, clickoutUrl: destinations_info[i].url };
+      let temp = { img: image_url, dest: destinations_info[i].city + ", " + destinations_info[i].country, clickoutUrl: destinations_info[i].url };
       output.push(temp);
     }
 

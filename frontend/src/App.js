@@ -21,6 +21,7 @@ export default function QuiltedImageList() {
   const [location, setLocation] = React.useState({ city: "", state: "" });
   const [photos, setPhotos] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  
 
   // Function to open a new tab with the provided URL
   const openInNewTab = (url) => {
@@ -109,19 +110,25 @@ export default function QuiltedImageList() {
           variant="quilted"
           cols={4}
           rowHeight={250}
-          gap={10}
+          gap={5}
         >
           {photos.map((item) => {
             // Create a new Image object to get the naturalWidth and naturalHeight
             const img = new Image();
             img.src = item.img;
             const [cols, rows] = calculateColsRows(img);
+            console.log(cols + "and " + rows)
             return (
               // Render each image as an ImageListItem with the calculated number of columns and rows
-              <ImageListItem key={item.img} cols={cols} rows={rows} >
+              <ImageListItem key={item.img} cols={cols} rows={rows} sx={{
+                "&:hover": {
+                  transform: 'scale(1.05) translateY(-3px)',
+                  cursor: 'pointer'
+                },
+              }}>
                 <img 
                   {...srcset(item.img, 121, rows, cols)}
-                  alt=""
+                  alt = {item.dest}
                   loading="lazy"
                   onClick={() => openInNewTab(item.clickoutUrl)}
                 />
