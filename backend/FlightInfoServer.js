@@ -209,7 +209,7 @@ function selectRandom() {
       }
   
       // Prepare the Google search URL and headers with a random user agent
-      const searchUrl = `https://www.google.com/search?q=${place}&oq=${place}&hl=en&tbm=isch&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc&sourceid=chrome&ie=UTF-8`;
+      const searchUrl = `https://www.google.com/search?q=${place + " landscape"}&oq=${place + " landscape"}&hl=en&tbm=isch&asearch=ichunk&async=_id:rg_s,_pms:s,_fmt:pc&sourceid=chrome&ie=UTF-8`;
       const user_agent = selectRandom();
       const headers = {
         "User-Agent": user_agent
