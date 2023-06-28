@@ -1,6 +1,5 @@
 # Travel Advice App
 
-![App Screenshot](screenshots/travelapp1.png)
 ![App Screenshot](screenshots/travelapp2.png)
 
 This web application recommends trip destinations based on the user's current location. It is designed with simplicity and aesthetics in mind, providing users with destination suggestions through captivating landscape images. By relying on first impressions of the landscapes rather than being influenced by other factors, users can make more unbiased destination choices.
