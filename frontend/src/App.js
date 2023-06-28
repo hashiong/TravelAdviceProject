@@ -94,7 +94,7 @@ export default function MansoryGallery() {
           </div>
         </div>
       )}
-      <Shapes />
+
     </React.Fragment>
   );
 }
